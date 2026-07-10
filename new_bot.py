@@ -8,7 +8,7 @@ BOT_TOKEN = "8992506840:AAFn6dSKy12F3kR10YW0EBO0efjfN8wC2lE"
 CHANNELS = ["@ghhggghhhgg", "@works_11w", "@aa_11_b1", "@samiworkers"] 
 ADMIN_ID = 8465808385
 REFERRAL_BONUS = 3.00 # ለአንድ ሰው መጋበዣ የሚከፈለው የብር መጠን
-MIN_WITHDRAW = 40.00  # ዝቅተኛው የማውጫ መጠን
+MIN_WITHDRAW = 30.00  # ዝቅተኛው የማውጫ መጠን
 # ---------------------
 
 bot = telebot.TeleBot(BOT_TOKEN)
