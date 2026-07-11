@@ -1,9 +1,9 @@
 import telebot
 from telebot import types
-from flask import Flask
+from flask import Flask, request
 
 # --- ማስተካከያ ቦታዎች ---
-BOT_TOKEN = "8992506840:AAHu0cy3sWdiZvSfIhBJRrujyUhCXNt8tGE"
+BOT_TOKEN = "8992506840:AAFKidL1aqHj8dx_kifvC0vWkgYR8MJsqJw"
 CHANNELS = ["@ghhggghhhgg", "@works_11w", "@aa_11_b1", "@samiworkers"] 
 ADMIN_ID = 8465808385
 ADMIN_USERNAME = "samuel16nm" 
@@ -11,8 +11,9 @@ REFERRAL_BONUS = 4.00
 MIN_WITHDRAW = 25.00  
 # ---------------------
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
 users_db = {}
+app = Flask('')
 
 def check_status(user_id):
     for channel in CHANNELS:
@@ -54,9 +55,12 @@ def start(message):
         users_db[user_id] = {'balance': 0.0, 'referred_by': None, 'referred_count': 0}
         args = message.text.split()
         if len(args) > 1:
-            referrer_id = int(args[1])
-            if referrer_id in users_db and referrer_id != user_id:
-                users_db[user_id]['referred_by'] = referrer_id
+            try:
+                referrer_id = int(args[1])
+                if referrer_id in users_db and referrer_id != user_id:
+                    users_db[user_id]['referred_by'] = referrer_id
+            except:
+                pass
 
     not_joined = get_not_joined_channels(user_id)
     
@@ -161,24 +165,26 @@ def process_withdraw(message):
     bot.send_message(ADMIN_ID, admin_msg, parse_mode="Markdown")
     bot.send_message(user_id, "✅ **ጥያቄዎ በተሳካ ሁኔታ ለባለቤቱ ተልኳል! በአጭር ጊዜ ውስጥ ይላክልዎታል።**", parse_mode="Markdown")
 
-print("ቦቱ እየሰራ ነው...")
-bot.delete_webhook(drop_pending_updates=True)
+@app.route('/' + BOT_TOKEN, methods=['POST'])
+def getMessage():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "!", 200
 
-app = Flask('')
+@app.route("/")
+def webhook():
+    bot.remove_webhook()
+    # Render የሚሰጥህን የኦንላይን ሊንክ (የዌብሳይትህን አድራሻ) እዚህ ጋ አስገባው 👇
+    # ለምሳሌ፡ bot.set_webhook(url='https://የአንተ-ፕሮጀክት-ስም.onrender.com/' + BOT_TOKEN)
+    import os
+    render_url = os.environ.get("RENDER_EXTERNAL_URL")
+    if render_url:
+        bot.set_webhook(url=render_url + '/' + BOT_TOKEN)
+        return f"Webhook set successfully on {render_url}!", 200
+    return "Bot is running, but RENDER_EXTERNAL_URL not found. Please set webhook manually.", 200
 
-@app.route('/')
-def home():
-    return "Bot is alive and running!"
-
-def run_flask():
+if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
-
-if __name__ == "__main__":
-    from threading import Thread
-    Thread(target=run_flask).start()
-
-    
-    print("Bot is polling...")
-    bot.infinity_polling(skip_pending=True)
