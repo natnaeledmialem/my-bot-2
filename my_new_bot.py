@@ -3,7 +3,7 @@ from telebot import types
 from flask import Flask
 
 # --- ማስተካከያ ቦታዎች ---
-BOT_TOKEN = "8992506840:AAGsRopgz_GpCiJRf85nVzLNMo_iSHXpcI" 
+BOT_TOKEN = "8992506840:AAHu0cy3sWdiZvSfIhBJRrujyUhCXNt8tGE"
 CHANNELS = ["@ghhggghhhgg", "@works_11w", "@aa_11_b1", "@samiworkers"] 
 ADMIN_ID = 8465808385
 ADMIN_USERNAME = "samuel16nm" 
