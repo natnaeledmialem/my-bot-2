@@ -177,7 +177,8 @@ def run_flask():
 
 if __name__ == "__main__":
     from threading import Thread
-    Thread(start=run_flask).start()
+    Thread(target=run_flask).start()
+
     
     print("Bot is polling...")
     bot.infinity_polling(skip_pending=True)
